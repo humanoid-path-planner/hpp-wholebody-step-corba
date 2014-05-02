@@ -18,7 +18,7 @@
 from omniORB import CORBA
 import CosNaming
 
-from hpp import WholebodyStep
+from hpp.corbaserver.wholebody_step import Robot
 
 class CorbaError(Exception):
     """
@@ -44,15 +44,15 @@ class Client:
     if self.rootContext is None:
         raise CorbaError ('failed to narrow the root context')
 
-    name = [CosNaming.NameComponent ("hpp", "plannerContext"),
-            CosNaming.NameComponent ("hpp", "wholebodyStep")]
+    name = [CosNaming.NameComponent ("hpp", "corbaserver"),
+            CosNaming.NameComponent ("wholebodyStep", "robot")]
     
     try:
         obj = self.rootContext.resolve (name)
     except CosNaming.NamingContext.NotFound, ex:
         raise CorbaError ('failed to find wholebodyStep service.')
     try:
-        client = obj._narrow (WholebodyStep)
+        client = obj._narrow (Robot)
     except KeyError:
         raise CorbaError ('invalid service name wholebodyStep')
 
@@ -60,4 +60,4 @@ class Client:
       # This happens when stubs from client and server are not synchronized.
         raise CorbaError (
             'failed to narrow client for service wholebodyStep')
-    self.problem = client
+    self.robot = client
